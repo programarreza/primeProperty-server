@@ -15,9 +15,15 @@ const userSchema = mongoose.Schema({
     required: true,
   },
   number: {
-	type: Number,
+    type: String,
     required: true,
     unique: true,
+  },
+  role: {
+    type: String,
+  },
+  image: {
+    type: String,
   },
   token: {
     type: String,
@@ -26,4 +32,3 @@ const userSchema = mongoose.Schema({
 
 const Users = mongoose.model("user", userSchema);
 module.exports = Users;
-

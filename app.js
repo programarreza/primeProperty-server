@@ -10,6 +10,7 @@ require("./db/connection");
 
 // Import Schema
 const Users = require("./models/Users");
+const House = require("./models/House");
 
 // middleware
 app.use(cors());
@@ -22,16 +23,16 @@ app.get("/", (req, res) => {
 
 app.post("/api/register", async (req, res, next) => {
   try {
-    const { fullName, number, email, password } = req.body;
+    const { fullName, number, role, image, email, password } = req.body;
 
-    if (!fullName || !number || !email || !password) {
+    if (!fullName || !number || !image || !email || !password || !role) {
       res.send(400).send("Please fill all required fields");
     } else {
       const isAlreadyExist = await Users.findOne({ email });
       if (isAlreadyExist) {
         res.status(400).send("User already exists");
       } else {
-        const newUser = new Users({ fullName, number, email });
+        const newUser = new Users({ fullName, number, image, email, role });
         bcryptjs.hash(password, 10, (err, hashedPassword) => {
           newUser.set("password", hashedPassword);
           newUser.save();
@@ -81,10 +82,52 @@ app.post("/api/login", async (req, res, next) => {
             }
           );
 
-          res.status(200).json({ user: {email:user.email, fullName: user.fullName, number: user.number}, token: user.token });
+          res.status(200).json({
+            user: {
+              email: user.email,
+              fullName: user.fullName,
+              number: user.number,
+            },
+            token: user.token,
+          });
         }
       }
     }
+  } catch (error) {
+    console.log("Error", error);
+  }
+});
+
+app.post("/api/house", async (req, res) => {
+  try {
+    const {
+      houseName,
+      address,
+      city,
+      bedroom,
+      image,
+      room_size,
+      availability,
+      rent,
+      phone,
+      description,
+    } = req.body;
+
+    const newHouse = new House({
+      houseName,
+      address,
+      city,
+      bedroom,
+      image,
+      room_size,
+      availability,
+      rent,
+      phone,
+      description,
+    });
+
+    newHouse.save();
+    res.send(newHouse);
   } catch (error) {
     console.log("Error", error);
   }

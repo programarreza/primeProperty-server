@@ -79,18 +79,19 @@ app.post("/api/login", async (req, res, next) => {
                 }
               );
               user.save();
-              next();
+              
+             return res.status(200).json({
+                user: {
+                  email: user.email,
+                  fullName: user.fullName,
+                  image: user.image,
+                  number: user.number,
+                  role: user.role 
+                },
+                token: token,
+              });
             }
-          );
-
-          res.status(200).json({
-            user: {
-              email: user.email,
-              fullName: user.fullName,
-              number: user.number,
-            },
-            token: user.token,
-          });
+            );
         }
       }
     }
@@ -138,6 +139,17 @@ app.post("/api/house", async (req, res) => {
 app.get("/api/houses", async (req, res) => {
   try {
     const houses = await House.find();
+    res.json(houses);
+  } catch (error) {
+    console.log("Error", error);
+  }
+});
+
+// get house to specific user
+app.get("/api/house/:email", async (req, res) => {
+  try {
+    const email = req.params.email;
+    const houses = await House.find({email: email});
     res.json(houses);
   } catch (error) {
     console.log("Error", error);

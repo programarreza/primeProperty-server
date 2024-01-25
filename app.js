@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const bcryptjs = require("bcryptjs");
 const cors = require("cors");
@@ -133,6 +134,16 @@ app.post("/api/house", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`prime property server port ${port}`);
+// get all house
+app.get("/api/houses", async (req, res) => {
+  try {
+    const houses = await House.find();
+    res.json(houses);
+  } catch (error) {
+    console.log("Error", error);
+  }
 });
+
+
+
+module.exports = app;
